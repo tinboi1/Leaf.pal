@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Leaf.pal | Your Digital Nature Companion</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Segoe+UI&display=swap');
+
+    /* Reset & base */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body, html {
+      height: 100%;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #000;
+      overflow-x: hidden;
+      color: #cee7bd;
+      text-shadow: 0 0 7px #7ac142cc;
+      user-select: none;
+    }
+
+    /* Background */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background-image: url('https://i.imgur.com/4ZXm8Hs.png'); /* Mystical Forest Background */
+      background-size: cover;
+      background-position: center;
+      filter: brightness(0.5) saturate(1.15);
+      z-index: -10;
+    }
+
+    /* Container */
+    .container {
+      max-width: 1200px;
+      margin: 40px auto 180px;
+      background: rgba(10, 40, 10, 0.85);
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 0 30px #4caf50aa;
+    }
+
+    /* Title */
+    h1 {
+      font-weight: 700;
+      font-size: 1.8rem;
+      color: #a0ff6e;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    /* Terminal grid */
+    .terminal-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.1fr 1fr;
+      gap: 24px;
+    }
+
+    /* Panels */
+    .panel {
+      background: rgba(1, 20, 1, 0.6);
+      border-radius: 10px;
+      padding: 15px;
+      box-shadow: 0 0 10px #4caf5055;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    /* Sections inside panels */
+    .section {
+      background: rgba(5, 30, 5, 0.4);
+      padding: 12px;
+      border-radius: 8px;
+      box-shadow: inset 0 0 5px #80d053;
+      color: #9fff7b;
+    }
+
+    .section-title {
+      font-weight: 700;
+      font-size: 16px;
+      border-bottom: 2px solid #7ac142;
+      margin-bottom: 10px;
+    }
+
+    /* Left Panel content */
+    .chart-placeholder { font-size: 14px; opacity: 0.8; margin-bottom: 10px; }
+    svg.line-chart { width: 100%; height: 60px; margin-top: 5px; }
+    .reward-value { font-size: 28px; font-weight: 700; color: #a0ff6e; }
+
+    /* Center Panel */
+    .center-panel {
+      background: rgba(10, 40, 10, 0.85);
+      border-radius: 16px;
+      padding: 25px;
+      box-shadow: 0 0 35px #87c331;
+      text-align: center;
+      color: #cee7bd;
+      mix-blend-mode: screen;
+    }
+
+    .infinite-symbol { position: relative; height: 120px; margin-bottom: 18px; }
+
+    .gold-circle, .leaf-circle {
+      position: absolute;
+      top: 0;
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      animation: pulseGlow 3s ease-in-out infinite;
+    }
+
+    .gold-circle { left: 22%; box-shadow: 0 0 30px 6px #f9d342; animation-delay: 0s; }
+    .leaf-circle { right: 22%; box-shadow: 0 0 30px 6px #7ac142; animation-delay: 1.5s; }
+
+    .infinite-text { position: relative; font-size: 20px; font-weight: 700; line-height: 1.2; }
+
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 0 30px 6px currentColor; }
+      50% { box-shadow: 0 0 60px 12px currentColor; }
+    }
+
+    /* AI Assistant */
+    .ai-assistant {
+      background: rgba(5, 40, 5, 0.7);
+      border-radius: 12px;
+      padding: 15px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      box-shadow: 0 0 12px #a4ca66cc;
+      margin-top: 10px;
+      color: #ccf59e;
+      font-weight: 600;
+      font-size: 13px;
+      line-height: 1.25;
+    }
+    .ai-assistant img { width: 48px; height: 48px; border-radius: 50%; }
+
+    /* Right Panel Sections */
+    .leaf-score-bar { display: flex; gap: 6px; margin-top: 6px; }
+    .leaf-icon {
+      width: 18px; height: 18px; border-radius: 4px;
+      box-shadow: 0 0 5px #7ac142; background-color: #7ac142;
+    }
+    .leaf-icon.last { background-color: #a0ff6e; }
+
+    .token-list { list-style: none; padding-left: 1rem; font-weight: 600; font-size: 15px; line-height: 1.5; }
+
+    /* Subscription Monthly Summary */
+    .subscription-summary {
+      position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
+      width: 340px; height: 140px;
+      background: rgba(5, 40, 5, 0.9);
+      box-shadow: 0 0 20px #7ac142cc; border-radius: 14px;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 0 20px;
+      color: #a0ff6e; font-weight: 700;
+      text-align: center; z-index: 25;
+    }
+
+    .sub-left { display: flex; gap: 4px; flex-direction: column; font-size: 18px; }
+    .sub-left .title { font-style: italic; font-weight: 600; }
+    .sub-left .value { font-size: 48px; font-weight: bold; color: #7ac142; line-height: 1; }
+    .sub-left .detail { color: #7ac142; font-weight: 600; }
+
+    .sub-right { display: flex; flex-direction: column; align-items: center; color: #a0ff6e; }
+    .sub-right svg { filter: drop-shadow(0 0 3px #7ac142); }
+    .sub-right .summary-title { font-weight: 600; margin-top: 6px; }
+    .sub-right .summary-dates { font-size: 11px; margin-top: 4px; opacity: 0.7; }
+
+    /* Firm Account */
+    .firm-account {
+      position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%);
+      font-size: 14px; font-weight: bold; color: #7ac142a0;
+      font-style: italic; user-select: none; z-index: 30; pointer-events: none;
+    }
+
+    /* Crypto Prices Scroller */
+    .crypto-scroller {
+      position: fixed; bottom: 140px; width: 100%;
+      background: rgba(3, 40, 3, 0.85); padding: 8px 0;
+      overflow: hidden; box-shadow: 0 0 15px #4caf5070; z-index: 22;
+      white-space: nowrap;
+    }
+    .crypto-scroll-content {
+      display: inline-flex; gap: 40px;
+      animation: scrollLeft 25s linear infinite;
+      font-weight: 700; font-size: 16px; color: #a0ff6e;
+      padding-left: 100%;
+    }
+    .crypto-item {
+      padding: 4px 8px; border: 1px solid #7ac142; border-radius: 8px;
+      background: rgba(10, 60, 10, 0.4); text-shadow: 0 0 6px #72c531;
+    }
+
+    /* Company Scroller */
+    .company-scroller {
+      position: fixed; bottom: 0;
+      background: #0b3d0b; width: 100%; padding: 18px 0;
+      overflow: hidden; box-shadow: 0 -4px 15px #4caf5055; z-index: 20;
+    }
+    .company-scroll-content {
+      display: inline-flex; align-items: center; gap: 60px;
+      animation: scrollLeft 30s linear infinite;
+      padding-left: 100%;
+    }
+    .company-logo img { height: 40px; filter: brightness(1.2); transition: filter 0.3s ease; }
+    .company-logo:hover img { filter: brightness(1.5); }
+
+    /* Bottom line */
+    .bottom-line {
+      position: fixed; bottom: 4px; left: 50%; transform: translateX(-50%);
+      font-size: 14px; font-weight: 600; color: #7ac142cc;
+      user-select: none; z-index: 35; text-shadow: 0 0 5px #7ac142aa;
+      pointer-events: none; text-align: center; width: 100%;
+    }
+
+    @keyframes scrollLeft {
+      0% { transform: translateX(0%); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .terminal-grid { grid-template-columns: 1fr; }
+      .subscription-summary { width: 90vw; height: auto; padding: 15px; }
+      .sub-left .value { font-size: 32px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>LEAF.PAL | YOUR DIGITAL NATURE COMPANION</h1>
+
+    <div class="terminal-grid">
+      <!-- Left Panel -->
+      <div class="panel">
+        <div class="section">
+          <div class="section-title">YOUR GOLD GROWTH</div>
+          <div class="chart-placeholder">PAXG TOTAL: 0.138 oz | $621.00 VALUE</div>
+          <svg class="line-chart" viewBox="0 0 100 40" aria-hidden="true">
+            <polyline fill="none" stroke="#7ac142" stroke-width="3" points="0,38 9,26 19,30 29,25 39,27 49,19 59,15 69,12 79,15 89,8 99,2" />
+          </svg>
+        </div>
+        <div class="section">
+          <div style="font-size: 22px; font-weight: bold; color: #7ac142;">REWARDS THIS MONTH:</div>
+          <div class="reward-value">+0.022 PAXG</div>
+          <div style="margin-top: 10px; font-weight: 600;">
+            NEXT REWARD DROP: <span style="font-weight: bold; color: #a0ff6e;">4 days</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Center Panel -->
+      <div class="center-panel">
+        <div class="infinite-symbol">
+          <div class="gold-circle"></div>
+          <div class="leaf-circle"></div>
+          <div class="infinite-text">
+            <span style="color: #7ac142;">1.000 LEAF</span> = <span style="color: #f9d342;">0.0044 PAXG</span>
+          </div>
+        </div>
+        <div class="ai-assistant" role="region" aria-label="AI Assistant Information">
+          <img src="https://cdn-icons-png.flaticon.com/512/4712/4712377.png" alt="Leaf pal AI assistant icon" />
+          <p>
+            LEAF.PAL AI ASSISTANT<br/>
+            You are currently optimizing for stable growth and nature impact. The market is favorable for increased impact via ReFi protocols.
+          </p>
+        </div>
+      </div>
+
+      <!-- Right Panel -->
+      <div class="panel">
+        <div class="section" aria-label="News impact score">
+          <div class="section-title">NEWS IMPACT STATS</div>
+          <div style="font-size: 18px; font-weight:700; margin-bottom: 6px;">IMPACT SCORE: 88 (VERY HIGH)</div>
+          <div class="leaf-score-bar">
+            <div class="leaf-icon"></div><div class="leaf-icon"></div><div class="leaf-icon"></div>
+            <div class="leaf-icon"></div><div class="leaf-icon"></div><div class="leaf-icon"></div>
+            <div class="leaf-icon"></div><div class="leaf-icon"></div>
+            <div class="leaf-icon last"></div><div class="leaf-icon last"></div>
+          </div>
+          <div style="margin-top: 6px; font-size: 11px;">Impact score for top news stories</div>
+        </div>
+
+        <div class="section" aria-label="Crypto tokens saved">
+          <div class="section-title">CRYPTO TOKENS SAVED:</div>
+          <ul class="token-list">
+            <li>🔥 BTC: 0.05</li><li>⭐ ETH: 1.2</li><li>🔗 LINK: 150</li>
+            <li>🌿 ALGO: 3000</li><li>🌀 IOTA: 12000</li>
+          </ul>
+        </div>
+
+        <div class="section" aria-label="Crypto portfolio initiatives">
+          <div class="section-title">CRYPTO PORTFOLIO INITIATIVES</div>
+          <div>🌱 TREES PLANTED: <strong>12</strong></div>
+          <div>🌍 CARBON CAPTURED: <strong>4.5 TONNES</strong></div>
+          <div>🏞️ CONSERVATION PROJECTS: <strong>3 (ACTIVE)</strong></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Crypto Ticker -->
+  <div class="crypto-scroller">
+    <div class="crypto-scroll-content">
+      <div class="crypto-item"><strong>BTC</strong>: $28,450</div>
+      <div class="crypto-item"><strong>ETH</strong>: $1,830</div>
+      <div class="crypto-item"><strong>LINK</strong>: $7.2</div>
+      <div class="crypto-item"><strong>ALGO</strong>: $0.41</div>
+      <div class="crypto-item"><strong>IOTA</strong>: $0.20</div>
+      <div class="crypto-item"><strong>PAXG</strong>: $1,800</div>
+      <!-- Duplicate for seamless loop -->
+      <div class="crypto-item"><strong>BTC</strong>: $28,450</div>
+      <div class="crypto-item"><strong>ETH</strong>: $1,830</div>
+      <div class="crypto-item"><strong>LINK</strong>: $7.2</div>
+      <div class="crypto-item"><strong>ALGO</strong>: $0.41</div>
+      <div class="crypto-item"><strong>IOTA</strong>: $0.20</div>
+      <div class="crypto-item"><strong>PAXG</strong>: $1,800</div>
+    </div>
+  </div>
+
+  <!-- Subscription Summary -->
+  <div class="subscription-summary">
+    <div class="sub-left">
+      <div class="title">Leaf.pal update</div>
+      <div class="value">.1 <br/> OF ONE GOLD BAR</div>
+      <div class="detail">↗ 15% ratio <br/> ↗ 15% value per bar</div>
+    </div>
+    <div class="sub-right">
+      <svg width="80" height="80" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="10" y="40" width="44" height="10" stroke="#7ac142" stroke-width="2" />
+        <rect x="18" y="32" width="28" height="10" stroke="#7ac142" stroke-width="2" />
+        <rect x="26" y="24" width="12" height="10" stroke="#7ac142" stroke-width="2" />
+        <rect x="10" y="40" width="44" height="10" fill="#a7d65c" fill-opacity="0.3" />
+        <rect x="18" y="32" width="28" height="10" fill="#a7d65c" fill-opacity="0.3" />
+        <rect x="26" y="24" width="12" height="10" fill="#a7d65c" fill-opacity="0.3" />
+      </svg>
+      <div class="summary-title">Monthly summary</div>
+      <div class="summary-dates">Jan 1 - Jan 31</div>
+    </div>
+  </div>
+
+  <div class="firm-account">firm account</div>
+
+  <!-- Company Logos -->
+  <div class="company-scroller">
+    <div class="company-scroll-content">
+      <div class="company-logo"><img src="https://seeklogo.com/images/P/paxos-logo-A6D01763C7-seeklogo.com.png" alt="Paxos" /></div>
+      <div class="company-logo"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Stripe_Logo%2C_revised_2016.svg/2560px-Stripe_Logo%2C_revised_2016.svg.png" alt="Stripe" /></div>
+      <div class="company-logo"><img src="https://avatars.githubusercontent.com/u/36299121?s=200&v=4" alt="Privy" /></div>
+      <div class="company-logo"><img src="https://upload.wikimedia.org/wikipedia/commons/6/6e/OpenAI_Logo.svg" alt="OpenAI" /></div>
+      <div class="company-logo"><img src="https://tatum.io/images/logo-tatum.svg" alt="Tatum" /></div>
+      <!-- Duplicate -->
+      <div class="company-logo"><img src="https://seeklogo.com/images/P/paxos-logo-A6D01763C7-seeklogo.com.png" alt="Paxos" /></div>
+      <div class="company-logo"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Stripe_Logo%2C_revised_2016.svg/2560px-Stripe_Logo%2C_revised_2016.svg.png" alt="Stripe" /></div>
+      <div class="company-logo"><img src="https://avatars.githubusercontent.com/u/36299121?s=200&v=4" alt="Privy" /></div>
+      <div class="company-logo"><img src="https://upload.wikimedia.org/wikipedia/commons/6/6e/OpenAI_Logo.svg" alt="OpenAI" /></div>
+      <div class="company-logo"><img src="https://tatum.io/images/logo-tatum.svg" alt="Tatum" /></div>
+    </div>
+  </div>
+
+  <div class="bottom-line">UPlantU labs LLC</div>
+</body>
+</html>
